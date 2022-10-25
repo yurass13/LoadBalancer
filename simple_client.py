@@ -5,7 +5,7 @@ from socket import AF_INET, SOCK_STREAM
 
 class SimpleClient:
     """Class for creating simplest tcp client and sanding data for server."""
-    def __init__(self, ip = '127.0.0.1', port = 8080):
+    def __init__(self, ip = '127.0.0.1', port = 9090):
         self.tcp_socket = socket(AF_INET, SOCK_STREAM)
         self.tcp_socket.connect((ip, port))
 
@@ -26,5 +26,8 @@ class SimpleClient:
 
 if __name__ == '__main__':
     client = SimpleClient()
-    client.data_provider = "I'm new client!"
-    print(client.data_provider)
+
+    value = 10
+    client.data_provider = str(value)
+    for num in range(value):
+        print(client.data_provider)
