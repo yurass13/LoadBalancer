@@ -1,6 +1,5 @@
 """Module with simplest server that read data from socket do some task and send answer."""
-
-from time import sleep
+from select import select
 from socket import socket
 from socket import (
     AF_INET,
@@ -8,6 +7,7 @@ from socket import (
     SOL_SOCKET,
     SO_REUSEADDR
 )
+from time import sleep
 
 from connections_storage import ConnectionStorage
 
@@ -16,56 +16,62 @@ class SimpleServer:
         Server for processing with only one client.
         Using connections for connectios.
     """
-    def __init__(self, ip= '', port=9090, queue_limit = 1, connections_limit = 1):
+    def __init__(self, ip= 'localhost', port=9090, queue_limit = 4, connections_limit = 2):
+        # Создаем серверный сокет
         self.host_socket = socket(AF_INET, SOCK_STREAM)
-        # Освобождаем порт
+        # AF_INET - протокол IPv4 (аналоги AF_INET6 - IPv6; AF_IPX - IPX; AF_UNIX - Unix сокеты.)
+        # SOCK_STREAM - TCP протокол (аналог SOCK_DGRAM)
+
+        # SO_REUSEADDR - освобождаем порт не дожидаясь таймаута
         self.host_socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, True)
-        
+
+        # Биндим сокет на полученные в ip и port  
         self.host_socket.bind((ip, port))
+
+        # Инициализация остальных внутренних "приколюх"
+        # Ограничения для очереди на подключение 
+        # по-умолчанию делаем ее немного больше, чем количество доступных подключений.
         self.queue_limit = queue_limit
-        self.connections_limit =connections_limit
+
+        # Ограничение количества подключений
+        self.connections_limit = connections_limit
         self.host_socket.listen(queue_limit)
+
+        # Контейнер для хранения клиент сокетов с активными подключениями. 
+        # (Тут нужно еще подумать над реализацией т.к. для кооперативного ПОДХОДА они НЕ ПОДХОДЯТ.
+        # TODO после реализации рабочего сервера на селекторах переписать и не позориться.)
         self.connections = ConnectionStorage()
 
-    def wait_client(self):
-        if self._check_limit():
-            print('Waiting for new connection...')
-            current_id = self.connections.add(self.host_socket.accept())
-            print('[{client[0]}] connected!\n'.format(
-                    client = self.connections.get_addres(current_id)
-                )
-            )
-        else:
-            print("No any slots for the connection.")
 
-
-    def read_data(self):
-        # Cotyl' dlya proverki
-        current_id = list(self.connections.keys())
-        print(current_id[0])
-        recv_data = self.connections[current_id[0]].recv(1024)
-        return recv_data.decode('utf-8')
-
-    def send_data(self, send_data):
-        # Cotyl' dlya proverki
-        current_id = list(self.connections.keys())
-        self.connections[current_id[0]].send(send_data.encode('utf-8'))
-        sleep(1)
-
-    def close_connection(self):
-        # Cotyl' dlya proverki
-        current_id = list(self.connections.keys())
-        print("[{client[0]}] disconnected!".format(
-                client = self.connections.get_addres(current_id[0])
+    def wait_client(self) -> int:
+        print('Waiting for new connection...')
+        current_id = self.connections.add(self.host_socket.accept())
+        print('[{client[0]}] connected!\n'.format(
+                client = self.connections.get_addres(current_id)
             )
         )
-        self.connections[current_id[0]].close()
+        return current_id
 
-    data_provider = property(read_data, send_data, close_connection)
+    def main(self):
+        while True:
+            if self._check_limit():
+                current_id = self.wait_client()
+                self._handle_connection(current_id)
+                print(len(self.connections))
+            else:
+                break
 
     def _check_limit(self) -> bool:
         """Return True if server have able for connect new user."""
-
         if len(self.connections) < self.connections_limit:
             return True
         return False
+
+
+    def _handle_connection(self, _id):
+        data = self.connections[_id] 
+        for num in range(int(data)):
+            sleep(1)
+            self.connections[_id] = str(num)
+
+        del self.connections[_id]
