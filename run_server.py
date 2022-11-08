@@ -1,6 +1,6 @@
-from simple_server import  SimpleServer
+from sys_call_server import  SelectServer
 
 if __name__== "__main__":
-    srv = SimpleServer()
+    srv = SelectServer()
 
     srv.main_process_loop()
