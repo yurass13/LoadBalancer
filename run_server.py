@@ -1,8 +1,7 @@
-"""Sample of simple_server processing."""
-from simple_server import SimpleServer
+from nb_server import NoBlockingServer
 
-if __name__ == "__main__":
-    # Create server object
-    srv = SimpleServer()
+if __name__== "__main__":
+    srv = NoBlockingServer()
 
-    srv.main()
+    srv.main_process_loop()
+    print('Конец.')
