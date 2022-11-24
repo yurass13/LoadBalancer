@@ -5,11 +5,8 @@ if __name__== "__main__":
     srv =  sc.serverCreator(
         accept_handler = eh.on_accept_ready,
         read_handler = eh.handle_connection,
-        disconnect_handler = None,
+        disconnect_handler = eh.on_disconnect,
         on_connect  = eh.on_connect,
-        on_disconnect  = eh.on_disconnect,
-        recv = eh.recv,
-        send = eh.send,
     )()
 
     srv.run()

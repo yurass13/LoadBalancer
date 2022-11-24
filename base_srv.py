@@ -1,5 +1,4 @@
 """Base class for the call-back server."""
-from abc import abstractclassmethod
 
 import selectors
 
@@ -10,6 +9,8 @@ from socket import (
     SOL_SOCKET,
     SO_REUSEADDR
 )
+
+import tasks
 
 
 class BaseCBServer:
@@ -34,19 +35,60 @@ class BaseCBServer:
         self.selector.register(self._host_socket, selectors.EVENT_READ, self._on_accept_ready)
 
         self._tasks = []
-        # Хранилище для ptp подключений
-        self._connections = {}
+
 
     def run(self):
         while True:
+            # Обрабатываем события
             events = self.selector.select()
             for key, mask in events:
                 callback = key.data
                 callback(key.fileobj, mask)
-            for _ in self._tasks:
-                self.do_tasks()
+            # Выполняем таски
+            while len(self._tasks):
+                self.do_task()
 
-    @abstractclassmethod
-    def do_tasks(self):
+    
+    def do_task(server):
+        """Default task handler."""
+        # Забираем первую таску из списка и отдаем на обработку
+        task = server._tasks.pop(0)
 
-        pass 
+        # Получаем функцию для исполнения таски по ее имени
+        target = tasks.get_task_by_name(task['name'])
+        
+        if target is None:
+            print(
+                "Task {name} is not avaliable".format(
+                    name = task['name']
+                )
+            )
+        try:
+            target(
+                sender = server,
+                value = task['args'],
+                _conn = task['connection']
+            )
+        except Exception as ex:
+            print("Task processing was unsuccesfull!")
+            print(ex)
+
+
+    def send(self, _conn, message):
+        """Decorator for default socket.send with using .
+            Encode message before sending for current connection."""
+        _conn.send(str(message).encode('utf-8'))
+
+
+    def recv(self, _conn):
+        """Decorator for default socket.recv.
+            Decode message from current connection before return and
+            handling ConnectionError exception.
+        """
+        try:
+            data = _conn.recv(1024).decode('utf-8')
+            return 0 if (data is None) or (not data.isdigit()) else data
+        except ConnectionError:
+            # TODO hadling Connection error
+            print("ConnectionError")
+            return 0

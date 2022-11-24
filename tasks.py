@@ -1,43 +1,43 @@
 """Module with tasks and task_handlers for server."""
+# TODO клиент должен иметь возможность получить список задач и
+# алгоритм его действий при работе с сервером.(Порядок отправки и получения сообщений с
+# кодом задачи и кодом действия.)
+def get_task_list():
+    ""
+    return [
+        "default",
+        "another_task"
+    ]
 
-# Handlers
-
-def do_tasks(server):
-    """Simple task handler.
-        Just owerride server abstract method and it'll done.
+def get_task_by_name(name: str="default"):
+    """Default task getter method.
+        Return worker-function by name.
     """
-    # Забираем первую таску из списка и отдаем на обработку
-    task = server._tasks.pop(0)
-
-    # Получаем функцию для исполнения таски по ее имени
-    target = get_task_by_name(task['name'])
-    
-    if target is None:
-        print(
-            "Task {name} is not avaliable".format(
-                name = task['name']
+    try:
+        return {
+            "default" : _task_send_decrement,
+            "another_task": _another_task,
+        }[name]
+    except KeyError:
+        raise ValueError(
+            "Unknown value! Can't find task with name {}!".format(
+                name
             )
         )
-    try:
-        target(
-            sender = server,
-            value = task['args'],
-            target = task['client']
-        )
-    except Exception as ex:
-        print("Task processing was unsuccesfull!")
-        print(ex)
-
-# Servise
-
-def get_task_by_name(name):
-
-    if name == "default":
-        return _task_send_decrement
-    else:
-        return None
 
 # Tasks
+def _task_send_decrement(sender, _conn, **kwargs):
+    """Send to current connection value - 1."""
+    sender.send(_conn, int(kwargs["value"]) - 1)
 
-def _task_send_decrement(sender, target: int, value):
-    sender.send(target, int(value) - 1)
+def _another_task(sender, _conn, **kwargs):
+    """Task template."""
+    sender.send(
+        _conn,
+        "{}".format(
+            kwargs
+        )
+    )
+
+    print("Send some data for client")
+    pass

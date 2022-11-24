@@ -1,7 +1,6 @@
 """Module with simplest server that read data from socket do some task and send answer."""
 
 from base_srv import BaseCBServer
-import tasks
 
 
 def serverCreator(accept_handler, read_handler, disconnect_handler = None, **kwargs):
@@ -14,6 +13,6 @@ def serverCreator(accept_handler, read_handler, disconnect_handler = None, **kwa
     new_class_atributes = kwargs
     new_class_atributes["_on_accept_ready"]  = accept_handler
     new_class_atributes["_on_read_ready"]  = read_handler
-    new_class_atributes["do_tasks"] = tasks.do_tasks
+    new_class_atributes["_on_disconnect"] = disconnect_handler
 
     return type(new_class_name, (BaseCBServer,), new_class_atributes)
