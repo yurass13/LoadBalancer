@@ -1,4 +1,4 @@
-"""Base class for the call-back server."""
+"""Module contains base class for the call-back server."""
 
 import selectors
 
@@ -14,6 +14,8 @@ import tasks
 
 
 class BaseCBServer:
+    """Base class for the callback server."""
+
     def __init__(self, queue_limit = 4, connections_limit = 2):
         self._host_socket = socket(AF_INET, SOCK_STREAM)
         # AF_INET - протокол IPv4 (аналоги AF_INET6 - IPv6; AF_IPX - IPX; AF_UNIX - Unix сокеты.)
@@ -27,6 +29,7 @@ class BaseCBServer:
         # Ограничения для очереди на подключение 
         # по-умолчанию делаем ее немного больше, чем количество доступных подключений.
         # Ограничение количества подключений
+        # TODO проверка количества подключений.
         self._queue_limit = queue_limit
         self._host_socket.listen(self._queue_limit)
         self._connections_limit = connections_limit
@@ -38,17 +41,24 @@ class BaseCBServer:
 
 
     def run(self):
+        """Main loop.
+            Algorithm:
+                1. Select all events
+                2. Call handlers for all events
+                3. Do tasks
+        """
         while True:
             # Обрабатываем события
             events = self.selector.select()
             for key, mask in events:
                 callback = key.data
                 callback(key.fileobj, mask)
+            # TODO Перенести выполнение тасок на отдельный поток
             # Выполняем таски
             while len(self._tasks):
                 self.do_task()
 
-    
+
     def do_task(server):
         """Default task handler."""
         # Забираем первую таску из списка и отдаем на обработку

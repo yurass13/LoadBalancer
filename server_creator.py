@@ -1,13 +1,18 @@
-"""Module with simplest server that read data from socket do some task and send answer."""
+"""Module with simplest server that read data from socket do some task and sends answer using callback."""
 
 from base_srv import BaseCBServer
 
 
 def serverCreator(accept_handler, read_handler, disconnect_handler = None, **kwargs):
-    """Create emplementation of call-back serever with using 
-        accept_handler - for handling incoming connactions,
-        read_handler  - for handling read-write process with current client,
-        disconnect_handler - for handling process of disconnecting clients or it self.
+    """Create instance of call-back serever.
+        Parameters: 
+            accept_handler: function - for handling incoming connactions,
+            read_handler: function - for handling read-write process with current connection,
+            disconnect_handler: function - for handling process of disconnecting.
+            **kwargs - another dependencies needed for working process.
+
+        Return:
+            Instance of callback server based on BaseCBServer and Parameters. 
     """
     new_class_name = "CallBackServer"
     new_class_atributes = kwargs
