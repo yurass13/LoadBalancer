@@ -15,4 +15,4 @@ def serverCreator(accept_handler, read_handler, disconnect_handler = None, **kwa
     new_class_atributes["_on_read_ready"]  = read_handler
     new_class_atributes["_on_disconnect"] = disconnect_handler
 
-    return type(new_class_name, (BaseCBServer,), new_class_atributes)
+    return type(new_class_name, (BaseCBServer,), new_class_atributes)()

@@ -7,6 +7,6 @@ if __name__== "__main__":
         read_handler = eh.handle_connection,
         disconnect_handler = eh.on_disconnect,
         on_connect  = eh.on_connect,
-    )()
+    )
 
     srv.run()
