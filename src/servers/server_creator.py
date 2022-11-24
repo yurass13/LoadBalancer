@@ -3,7 +3,7 @@
 from base_srv import BaseCBServer
 
 
-def serverCreator(accept_handler, read_handler, disconnect_handler = None, **kwargs):
+def create_server(accept_handler, read_handler, disconnect_handler = None, **kwargs):
     """Create instance of call-back serever.
         Parameters: 
             accept_handler: function - for handling incoming connactions,

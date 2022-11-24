@@ -10,7 +10,7 @@ from socket import (
     SO_REUSEADDR
 )
 
-import tasks
+import src.tasks.tasks as tasks
 
 
 class BaseCBServer:

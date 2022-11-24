@@ -20,16 +20,6 @@ def on_accept_ready(self, sock, mask) -> int:
         self.on_connect(ptp_connection)
 
 
-def on_connect(self, _conn):
-    """Console log for 'accept new connection' event."""
-    print(f"User from {_conn.getpeername()} connected!")
-
-
-def on_disconnect(self, _conn):
-    """Console log for 'close current ptp connection' event."""
-    print(f"User from {_conn.getpeername()} disconnected!")
-
-
 def handle_connection(self, _conn, mask):
     """Handling ready for reading ptp sockets.
 
@@ -50,3 +40,14 @@ def handle_connection(self, _conn, mask):
         else:
             self._on_disconnect(_conn)
             self.selector.unregister(_conn)
+
+# LOGGERS
+
+def on_connect(self, _conn):
+    """Console log for 'accept new connection' event."""
+    print(f"User from {_conn.getpeername()} connected!")
+
+
+def on_disconnect(self, _conn):
+    """Console log for 'close current ptp connection' event."""
+    print(f"User from {_conn.getpeername()} disconnected!")

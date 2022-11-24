@@ -1,4 +1,4 @@
-from client import SimpleClient
+from src.clients.client import SimpleClient
 from random import random
 from time import sleep
 
