@@ -1,6 +1,7 @@
-from src.clients.client import SimpleClient
 from random import random
 from time import sleep
+
+from src.clients import SimpleClient
 
 if __name__ == "__main__":
     client = SimpleClient()

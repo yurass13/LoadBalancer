@@ -1,2 +1,2 @@
-from server_creator import create_server
-from .event_handlers import base_event_handlers as handlers
+from .server_creator import create_server
+from . import event_handlers

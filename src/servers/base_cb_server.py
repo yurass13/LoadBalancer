@@ -1,4 +1,4 @@
-"""Module contains base class for the call-back server."""
+"""Module contains base class for callback server."""
 
 import selectors
 
@@ -10,7 +10,7 @@ from socket import (
     SO_REUSEADDR
 )
 
-import src.tasks.tasks as tasks
+from ..tasks import get_task_by_name
 
 
 class BaseCBServer:
@@ -65,7 +65,7 @@ class BaseCBServer:
         task = server._tasks.pop(0)
 
         # Получаем функцию для исполнения таски по ее имени
-        target = tasks.get_task_by_name(task['name'])
+        target = get_task_by_name(task['name'])
         
         if target is None:
             print(
