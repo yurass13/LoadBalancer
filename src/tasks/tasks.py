@@ -15,7 +15,7 @@ def get_task_by_name(name: str="default"):
     """
     try:
         return {
-            "default" : _task_send_decrement,
+            "default": _task_send_decrement,
             "another_task": _another_task,
         }[name]
     except KeyError:
