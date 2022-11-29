@@ -1,6 +1,6 @@
-from simple_server import  SimpleServer
+from nb_server import NoBlockingServer
 
 if __name__== "__main__":
-    srv = SimpleServer()
+    srv = NoBlockingServer()
 
     srv.main_process_loop()
