@@ -10,7 +10,7 @@ from socket import (
     SO_REUSEADDR
 )
 
-from ..tasks import get_task_by_name
+from tasks import get_task_by_name
 
 
 class BaseCBServer:
