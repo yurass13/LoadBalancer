@@ -15,6 +15,7 @@ def on_accept_ready(self, sock, mask) -> int:
             3. Call logging function
     """
     ptp_connection, _ = sock.accept()
+    ptp_connection.setblocking(False)
     self.selector.register(ptp_connection, EVENT_READ, self._on_read_ready)
     if self.on_connect:
         self.on_connect(ptp_connection)
