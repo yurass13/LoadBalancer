@@ -1,6 +1,5 @@
 """simplest tcp client"""
 
-
 from random import randint
 from time import sleep
 
@@ -22,6 +21,7 @@ def run_simple_client() -> None:
         sleep(1)
         client.data_provider = str(value)
         value = int(client.data_provider)
+
 
 
 class SimpleClient:

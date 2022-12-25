@@ -3,14 +3,16 @@
 from multiprocessing import Process
 
 from clients import run_simple_client
-
 from servers import server_factory
+
 
 def run_server() -> None:
     """Target function for running default server.
     """
+
     srv = server_factory()
     srv.run()
+
 
 if __name__ == "__main__":
     server_p = Process(
@@ -29,6 +31,7 @@ if __name__ == "__main__":
                 name = str(_)
                 
             ) for _ in range(4)
+
         ]
         for process in clients_ps:
             process.start()

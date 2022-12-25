@@ -4,14 +4,13 @@ from .event_handlers import get_handlers_strategy
 
 
 def server_factory(server_assignment: str = "default") -> BaseCBServer:
-    """ Using server_type as 
-        create instance of call-back serever.
+    """ Using server_type as create instance of call-back serever.
 
         Parameters:
         server_name: str,
             "default" | "data_storage" | "balancer" | ...
 
-        Return:
+        Returns:
             Instance of callback server based on BaseCBServer by server_type. 
     """
     try:
