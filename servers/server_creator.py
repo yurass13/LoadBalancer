@@ -1,22 +1,23 @@
 """Module contains base class for the call-back server and function server creator."""
 from .base_cb_server import BaseCBServer
+from .event_handlers import get_handlers_strategy
 
 
-def create_server(accept_handler, read_handler, disconnect_handler = None, **kwargs):
-    """Create instance of call-back serever.
-        Parameters: 
-            accept_handler: function - for handling incoming connections,
-            read_handler: function - for handling read-write process with current connection,
-            disconnect_handler: function - for handling process of disconnecting.
-            **kwargs - another dependencies needed for working process.
+def server_factory(server_assignment: str = "default") -> BaseCBServer:
+    """ Using server_type as 
+        create instance of call-back serever.
+
+        Parameters:
+        server_name: str,
+            "default" | "data_storage" | "balancer" | ...
 
         Return:
-            Instance of callback server based on BaseCBServer and Parameters. 
+            Instance of callback server based on BaseCBServer by server_type. 
     """
-    new_class_name = "CallBackServer"
-    new_class_atributes = kwargs
-    new_class_atributes["_on_accept_ready"] = accept_handler
-    new_class_atributes["_on_read_ready"] = read_handler
-    new_class_atributes["_on_disconnect"] = disconnect_handler
+    try:
+        class_name, class_atributes = get_handlers_strategy(server_assignment)
+        # print(f"Handlers choosed {class_name}")
+    except KeyError:
+        raise ValueError("Unknown assigment!")
 
-    return type(new_class_name, (BaseCBServer, ), new_class_atributes)()
+    return type(class_name, (BaseCBServer, ), class_atributes)()

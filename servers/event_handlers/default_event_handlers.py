@@ -2,8 +2,21 @@
 
 from selectors import EVENT_READ
 
+def get_setup() -> tuple:
+    """Retruns template for creating base server."""
+    return (
+        "DefaultServer",
+        {
+            '_on_accept_ready':_on_accept_ready,
+            '_on_read_ready': _on_read_ready,
+            '_on_disconnect': None,
+            '_on_connect':_on_connect,
+            '_on_disconnect': _on_disconnect,
+        }
+    )
 
-def on_accept_ready(self, sock, mask) -> int:
+
+def _on_accept_ready(self, sock, mask) -> int:
     """Handling accept connection event on the host socket.
         Parameters:
             sock:socket.socket - host socket
@@ -17,11 +30,11 @@ def on_accept_ready(self, sock, mask) -> int:
     ptp_connection, _ = sock.accept()
     ptp_connection.setblocking(False)
     self.selector.register(ptp_connection, EVENT_READ, self._on_read_ready)
-    if self.on_connect:
-        self.on_connect(ptp_connection)
+    if self._on_connect:
+        self._on_connect(ptp_connection)
 
 
-def handle_connection(self, _conn, mask):
+def _on_read_ready(self, _conn, mask):
     """Handling ready for reading ptp sockets.
 
         Alghorithm:
@@ -44,11 +57,11 @@ def handle_connection(self, _conn, mask):
 
 # LOGGERS
 
-def on_connect(self, _conn):
+def _on_connect(self, _conn):
     """Console log for 'accept new connection' event."""
     print(f"User from {_conn.getpeername()} connected!")
 
 
-def on_disconnect(self, _conn):
+def _on_disconnect(self, _conn):
     """Console log for 'close current ptp connection' event."""
     print(f"User from {_conn.getpeername()} disconnected!")

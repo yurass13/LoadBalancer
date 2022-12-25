@@ -1,7 +1,28 @@
 """simplest tcp client"""
 
+
+from random import randint
+from time import sleep
+
+
 from socket import socket
 from socket import AF_INET, SOCK_STREAM
+
+
+def run_simple_client() -> None:
+    """Target function for running current client.
+
+    Args:
+        client (SimpleClient): target client for processing.
+    """
+    client = SimpleClient()
+    value = randint(0, 20)
+    print(client.tcp_socket.getsockname(), "Generated value:{}".format(value))
+    while value >= 0:
+        sleep(1)
+        client.data_provider = str(value)
+        value = int(client.data_provider)
+
 
 class SimpleClient:
     """Class for creating simplest tcp client and sanding data for server."""
