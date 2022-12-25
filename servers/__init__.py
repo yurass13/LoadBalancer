@@ -1,2 +1,2 @@
-from .server_creator import create_server
+from .server_creator import server_factory
 from . import event_handlers

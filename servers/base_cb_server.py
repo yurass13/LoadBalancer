@@ -25,6 +25,8 @@ class BaseCBServer:
         self._host_socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, True)
 
         self._host_socket.bind(('localhost', 9090))
+        self._host_socket.setblocking(False)
+
 
         # Ограничения для очереди на подключение 
         # по-умолчанию делаем ее немного больше, чем количество доступных подключений.
